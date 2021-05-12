@@ -33,7 +33,8 @@ export class MediArchiveComponent implements OnInit {
 
   mediaArchiveForm = new FormGroup({
     video: new FormControl(),
-    annotations: new FormControl()
+    annotations: new FormControl(),
+    utc: new FormControl()
   })
 
   constructor(
@@ -48,11 +49,20 @@ export class MediArchiveComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.hasOwnProperty('video') && params.hasOwnProperty('annotations')) {
         // console.log(params)
-        this.mediaArchiveForm.setValue({
-          video: params.video,
-          annotations: params.annotations
-        })
-
+        if (params.hasOwnProperty('utc')) {
+          this.mediaArchiveForm.setValue({
+            video: params.video,
+            annotations: params.annotations,
+            utc: params.utc
+          })
+        }
+        else {
+          this.mediaArchiveForm.setValue({
+            video: params.video,
+            annotations: params.annotations,
+            utc: 0
+          })
+        }
         this.probeUrlIfAuthorized()
       }
     })
@@ -99,7 +109,7 @@ export class MediArchiveComponent implements OnInit {
                 this.response_video_header = 'VIDEO LOADED'
                 this.mediArchiveModal.foundation('close')
 
-                this.router.navigate(['/'])
+                this.router.navigate(['/'], { queryParams: {utc: this.mediaArchiveForm.value.utc} })
               }
             }
           })
