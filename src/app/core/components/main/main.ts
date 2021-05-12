@@ -7,7 +7,7 @@ import {
 import { Title } from '@angular/platform-browser'
 
 import { Store } from '@ngrx/store'
-// import { ActivatedRoute } from '@angular/router'
+import { ActivatedRoute } from '@angular/router'
 
 import { Observable, Subscription, fromEvent } from 'rxjs'
 import { filter, pairwise, withLatestFrom } from 'rxjs/operators'
@@ -46,7 +46,7 @@ export class MainContainer implements OnInit, OnDestroy, AfterViewInit {
     private readonly _cdr: ChangeDetectorRef,
     private readonly _rootStore: Store<fromRoot.State>,
     private titleService: Title,
-    // private activatedRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private _global: Globals
   ) { }
 
@@ -93,6 +93,15 @@ export class MainContainer implements OnInit, OnDestroy, AfterViewInit {
           // console.log(sub)
           sub.unsubscribe()
         })
+      }
+    })
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.hasOwnProperty('utc')) {
+        console.log('queryParams.utc = ' + params.utc);
+        this._rootStore.dispatch(new project.PlayerRequestCurrentTime({
+          currentTime: (params.utc)
+        }))
       }
     })
   }
